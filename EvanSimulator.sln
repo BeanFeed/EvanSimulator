@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32126.317
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EvanSimulator", "EvanSimulator\EvanSimulator.csproj", "{1A1F1FBE-BFEC-4B0D-B9F6-DECC5FFE0A16}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1A1F1FBE-BFEC-4B0D-B9F6-DECC5FFE0A16}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A1F1FBE-BFEC-4B0D-B9F6-DECC5FFE0A16}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A1F1FBE-BFEC-4B0D-B9F6-DECC5FFE0A16}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A1F1FBE-BFEC-4B0D-B9F6-DECC5FFE0A16}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9FE43D68-6B5E-4F73-8E72-1147008610D9}
+	EndGlobalSection
+EndGlobal
