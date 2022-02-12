@@ -1,13 +1,14 @@
 using EvanSimulator.logic;
 using EvanSimulator.logic.gameObjects;
 using System.Diagnostics;
-using System.Reflection;
-using System.Windows.Input;
 
 namespace EvanSimulator
 {
     public partial class Form : System.Windows.Forms.Form
     {
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        public static extern short GetAsyncKeyState(int key);
+
         public bool running = true;
         public Stopwatch stopWatch = new Stopwatch();
 
@@ -69,7 +70,14 @@ namespace EvanSimulator
         {
             while (running)
             {
-                graphics.Clear(Color.Green);
+                if(GetAsyncKeyState(32) == 0x0){
+                    graphics.Clear(Color.Green);
+                }
+                else
+                {
+                    graphics.Clear(Color.Red);
+
+                }
 
                 while(toDoInGameThread.Count > 0)
                 {
@@ -103,6 +111,7 @@ namespace EvanSimulator
 
         void OnKeyDown(object sender, KeyEventArgs e)
         {
+            /*
             toDoInGameThread.Enqueue(() => {
                 foreach (string go in gameObjects.Keys.ToList())
                 {
@@ -111,10 +120,12 @@ namespace EvanSimulator
             });
             e.Handled = true;
             e.SuppressKeyPress = true;
+            */
         }
 
         void OnKeyUp(object sender, KeyEventArgs e)
         {
+            /*
             toDoInGameThread.Enqueue(() => {
                 foreach (string go in gameObjects.Keys.ToList())
                 {
@@ -123,6 +134,7 @@ namespace EvanSimulator
             });
             e.Handled = true;
             e.SuppressKeyPress = true;
+            */
         }
 
         public string RandomString(int length)
