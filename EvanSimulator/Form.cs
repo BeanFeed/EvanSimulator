@@ -15,8 +15,8 @@ namespace EvanSimulator
 
         public Thread gameThread;
 
-        //public string assetsFolder = "C:\\Users/Austin/source/repos/EvanSimulator/EvanSimulator/assets/";
-        public string assetsFolder = "C:\\Users/Billy George/source/repos/EvanSimulator/EvanSimulator/assets/";
+        public string assetsFolder = "C:\\Users/Austin/source/repos/EvanSimulator/EvanSimulator/assets/";
+        //public string assetsFolder = "C:\\Users/Billy George/source/repos/EvanSimulator/EvanSimulator/assets/";
 
         public Bitmap bmp = new(1, 1);
         public Graphics graphics;
@@ -26,19 +26,22 @@ namespace EvanSimulator
 
         public Random random = new(69);
 
+        public PointF mousePos = new PointF();
+
 
         //use https://keycode.info/ to get keycodes
         public Dictionary<string, InputKey> inputKeys = new Dictionary<string, InputKey>()
         {
-            { "jump", new InputKey(new int[] { 38, 87 }) },
-            { "crouch", new InputKey(new int[] { 16, 40, 83 }) },
-            { "shoot", new InputKey(new int[] { 32 }) },
+            { "jump", new InputKey(new int[] { 38, 32 }) },
+            { "crouch", new InputKey(new int[] { 16, 40 }) },
+            { "shoot", new InputKey(new int[] { 1 }) },
             { "left", new InputKey(new int[] { 37, 65 }) },
             { "right", new InputKey(new int[] { 39, 68 }) },
+            { "test", new InputKey(new int[] { 70 }) },
         };
 
 
-        private Dictionary<string, GameObject> gameObjects = new Dictionary<string, GameObject>();
+        public Dictionary<string, GameObject> gameObjects = new Dictionary<string, GameObject>();
 
         public Form()
         {
@@ -66,7 +69,10 @@ namespace EvanSimulator
             }
 
             Spawn("player", new Player(this, new PointF(100.0F,100.0F)));
-
+            //Spawn("enemy", new Enemy(this, new PointF(300.0F, 100.0F)));
+            GameObject plat = new GameObject(this, "sprites/world/platforms/platform1.png", new PointF(400.0F, 450.0F));
+            plat.size = new PointF(100, 50);
+            Spawn("platform-qw49e567sadkjfhj", plat);
             //gameObjects["player"].size = new PointF(50f, 50f);
 
             stopWatch.Start();
@@ -89,6 +95,11 @@ namespace EvanSimulator
             while (running)
             {
                 frameTimer.Restart();
+
+                mousePos.X = Cursor.Position.X - pictureBox1.Location.X - Location.X;
+                mousePos.Y = Cursor.Position.Y - pictureBox1.Location.Y - Location.Y;
+
+                mousePos = Util.ScaleVector(mousePos, 0.935f);
 
                 foreach (KeyValuePair<string, InputKey> inputKey in inputKeys)
                 {
@@ -121,6 +132,11 @@ namespace EvanSimulator
                 foreach (string go in gameObjects.Keys.ToList())
                 {
                     gameObjects[go].Render();
+                }
+
+                foreach (string go in gameObjects.Keys.ToList())
+                {
+                    gameObjects[go].GuiRender();
                 }
 
                 //--- render end ---
@@ -157,6 +173,8 @@ namespace EvanSimulator
                 {
                     Thread.Sleep((int)timeToSleep);
                 }
+
+                //Thread.Sleep(100);
             }
         }
         void KeyDownEvent(string key)

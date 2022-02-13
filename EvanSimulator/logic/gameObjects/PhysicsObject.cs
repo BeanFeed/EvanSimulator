@@ -58,6 +58,7 @@ namespace EvanSimulator.logic.gameObjects
                 }
 
                 velocity.X *= -bounce;
+                OnCollide(null);
             }
 
             if (
@@ -80,12 +81,113 @@ namespace EvanSimulator.logic.gameObjects
                 }
 
                 velocity.Y *= -bounce;
+                OnCollide(null);
             }
+        }
+
+        public virtual void OnCollide(GameObject against)
+        {
+            
         }
 
         void ObjectsCollision()
         {
-            //TODO
+            foreach (string go in game.gameObjects.Keys.ToList())
+            {
+                if (go != ID && game.gameObjects[go].hasCollision)
+                {
+                    ObjectCollision(game.gameObjects[go]);
+                }
+            }
+        }
+
+        void ObjectCollision(GameObject go)
+        {
+            float thisBottom = position.Y + size.Y;
+            float thisRight = position.X + size.X;
+
+            float otherBottom = go.position.Y + go.size.Y;
+            float otherRight = go.position.X + go.size.X;
+
+            bool leftOverlapX = position.X >= go.position.X && position.X <= otherRight;//left side of this is in other
+            bool rightOverlapX = thisRight >= go.position.X && thisRight <= otherRight;//right side of this is in other
+
+            float xOverlapAmt = Math.Max(
+                Math.Max(
+                    position.X - go.position.X,
+                    otherRight - position.X
+                ),
+                Math.Max(
+                    thisRight - go.position.X,
+                    otherRight - thisRight
+                )
+            );
+
+            bool overlapX = leftOverlapX || rightOverlapX;
+
+            bool topOverlapY = position.Y >= go.position.Y && position.Y <= otherBottom;//top side of this is in other
+            bool bottomOverlapY = thisBottom >= go.position.Y && thisBottom <= otherBottom;//bottom side of this is in other
+
+            float yOverlapAmt = Math.Max(
+                Math.Max(
+                    position.Y - go.position.Y,
+                    otherBottom - position.Y
+                ),
+                Math.Max(
+                    thisBottom - go.position.Y,
+                    otherBottom - thisBottom
+                )
+            );
+
+            bool overlapY = topOverlapY || bottomOverlapY;
+
+            if (overlapX && overlapY)
+            {
+                OnCollide(go);
+
+                if (overlapX && xOverlapAmt > yOverlapAmt)
+                {
+                    if ((leftOverlapX && velocity.X < 0) || (rightOverlapX && velocity.X > 0))
+                    {
+                        velocity.X *= -bounce;
+                    }
+
+                    if (leftOverlapX)
+                    {
+                        position.X = otherRight + 1;
+                    }
+
+                    if (rightOverlapX)
+                    {
+                        position.X = (go.position.X - size.X) - 1;
+                    }
+                }
+
+
+                if (overlapY && xOverlapAmt < yOverlapAmt)
+                {
+                    if ((topOverlapY && velocity.Y < 0) || (bottomOverlapY && velocity.Y > 0))
+                    {
+                        velocity.Y *= -bounce;
+                    }
+
+                    if (topOverlapY)
+                    {
+                        position.Y = otherBottom + 1;
+                    }
+
+                    if (bottomOverlapY)
+                    {
+                        grounded = true;
+                        position.Y = (go.position.Y - size.Y) - 1;
+                    }
+                }
+
+                if(go is PhysicsObject)
+                {
+                    velocity = Util.AddPositions(velocity, ((PhysicsObject)go).velocity);
+                }
+            }
         }
 
         void Physics()

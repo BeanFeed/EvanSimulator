@@ -9,6 +9,7 @@ namespace EvanSimulator.logic.gameObjects
     internal class Bullet : PhysicsObject
     {
         private float startSpeed = 30f;
+        public int bounceCount = 0;
 
         static Dictionary<string, string> spritesCouldUse = new Dictionary<string, string>()
         {
@@ -19,27 +20,29 @@ namespace EvanSimulator.logic.gameObjects
 
         };
 
-        public Bullet(Form game, PointF position, string dir, PointF pVel) : base(
+        public Bullet(Form game, PointF position, PointF startingVelocity) : base(
             game,
             Util.RandomDictItem(game, spritesCouldUse).Value,
             position,
             10,//mass
+            //0,//mass
             1.001f,//drag, 1 is no drag, higher is more
+            //1f,//drag, 1 is no drag, higher is more
             0.9f//bounce
+            //0f//bounce
         )
         {
-            if (dir == "left")
-            {
-                velocity.X = pVel.X - startSpeed;
-            }
-            
-            if (dir == "right")
-            {
-                velocity.X = pVel.X + startSpeed;
-            }
-
-
+            velocity = startingVelocity;
             size = new PointF(10f, 10f);
+        }
+
+        public override void OnCollide(GameObject against)
+        {
+            bounceCount++;
+            if(bounceCount > 1)
+            {
+                Despawn();
+            }
         }
 
         public override void Render()

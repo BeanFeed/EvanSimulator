@@ -61,10 +61,17 @@ namespace EvanSimulator.logic
             this.position = position;
         }
 
+        public PointF GetCenter()
+        {
+            return Util.AddPositions(position, Util.ScaleVector(size, 0.5f));
+        }
+
         public virtual void Render()
         {
             game.graphics.DrawImage(sprites[spriteToUse], position.X, position.Y, size.X, size.Y);
         }
+
+        public virtual void GuiRender() { }
 
         public virtual void OnKeyDown(string key)
         {

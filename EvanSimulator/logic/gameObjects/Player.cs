@@ -6,21 +6,19 @@ using System.Threading.Tasks;
 
 namespace EvanSimulator.logic.gameObjects
 {
-    internal class Player : PhysicsObject
+    internal class Player : Person
     {
-        float speed = 10;
-        float jumpPower = 30;
 
-        int timeSinceLastJump = 0;
-
-        public bool crouched = false;
+        int shootCooldown = 0;
 
         public Player(Form game, PointF position) : base(
             game,
             new Dictionary<string, string>()
             {
                 { "default", "Sprites/player/player.png" },
-                { "left", "Sprites/player/playerLeft.png" }
+                { "left", "Sprites/player/playerLeft.png" },
+                { "shootCooldownBar", "sprites/gui/shootCooldown.png" },
+                { "barBackground", "sprites/gui/barBackground.png" }
             },
             position,
             100,//mass
@@ -36,30 +34,12 @@ namespace EvanSimulator.logic.gameObjects
         {
             if (key == "crouch")
             {
-                if (!crouched)
-                {
-                    crouched = true;
-                    size.Y /= 2;
-                    position.Y += size.Y;
-                    speed /= 2;
-                }
+                Crouch();
             }
 
             if (key == "shoot")
             {
-                game.Spawn(
-                    ("bean-" + Util.RandomString(game, 69)),
-                    new Bullet(
-                        game,
-                        new PointF(
-                            position.X + (size.X * 0.5f),
-                            position.Y + (size.Y * 0.7f)
-                        ),
-                        (spriteToUse == "left" ? "left" : "right"),
-                        velocity
-                        
-                    )
-                );
+                Shoot();
             }
         }
 
@@ -67,45 +47,70 @@ namespace EvanSimulator.logic.gameObjects
         {
             if (key == "crouch")
             {
-                if (crouched)
-                {
-                    crouched = false;
-                    position.Y -= size.Y;
-                    size.Y *= 2;
-                    speed *= 2;
-                }
+                UnCrouch();
             }
         }
 
+        void Shoot()
+        {
+            if(shootCooldown > 0)
+            {
+                return;
+            }
+
+            shootCooldown = 15;
+
+            PointF shootFrom = GetShootFrom();
+            PointF startingVel = Util.SubtractPositions(game.mousePos, shootFrom);
+            startingVel = Util.NormalizeVector(startingVel);
+            startingVel = Util.ScaleVector(startingVel, 50f);
+
+            game.Spawn(
+                ("bean-" + Util.RandomString(game, 69)),
+                new Bullet(
+                    game,
+                    shootFrom,
+                    Util.AddPositions(velocity, startingVel)
+                )
+            );
+        }
         void getInput()
         {
-            if (game.inputKeys["left"].pressed && game.inputKeys["right"].pressed)
-            {
-
-            }
-            else if (game.inputKeys["left"].pressed)
-            {
-                velocity.X = -speed;
-                spriteToUse = "left";
-            }
-            else if (game.inputKeys["right"].pressed)
-            {
-                velocity.X = speed;
-                spriteToUse = "default";
-            }
-
-            if (game.inputKeys["jump"].pressed && grounded && timeSinceLastJump > 5)
-            {
-                velocity.Y = -(crouched ? (jumpPower / 2) : jumpPower);
-                timeSinceLastJump = 0;
-            }
+            left = game.inputKeys["left"].pressed;
+            right = game.inputKeys["right"].pressed;
+            jump = game.inputKeys["jump"].pressed;
         }
+
         public override void Render()
         {
-            timeSinceLastJump++;
+            if (shootCooldown > 0)
+            {
+                shootCooldown--;
+            }
             getInput();
 
             base.Render();
+        }
+
+        public override void GuiRender()
+        {
+            game.graphics.DrawImage(
+                sprites["barBackground"],
+                10,
+                game.height - 20,
+                30,
+                10
+            );
+
+            game.graphics.DrawImage(
+                sprites["shootCooldownBar"],
+                10,
+                game.height - 20,
+                30 - (shootCooldown * 2),
+                10
+            );
+
+            base.GuiRender();
         }
     }
 }
