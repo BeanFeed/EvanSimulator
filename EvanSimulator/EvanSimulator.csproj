@@ -7,10 +7,13 @@
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  
+    <OutputType>WinExe</OutputType>
+    <StartupObject></StartupObject>
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="assets\**" />
     <None Remove="logic\NewFile1.txt" />
   </ItemGroup>
 

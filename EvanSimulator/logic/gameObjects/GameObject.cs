@@ -66,12 +66,12 @@ namespace EvanSimulator.logic
             game.graphics.DrawImage(sprites[spriteToUse], position.X, position.Y, size.X, size.Y);
         }
 
-        public virtual void OnKeyDown(Keys key)
+        public virtual void OnKeyDown(string key)
         {
 
         }
 
-        public virtual void OnKeyUp(Keys key)
+        public virtual void OnKeyUp(string key)
         {
 
         }

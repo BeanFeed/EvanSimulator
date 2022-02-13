@@ -30,7 +30,7 @@ namespace EvanSimulator.logic.gameObjects
 
         void Velocity()
         {
-            velocity.Y += mass * 0.001f;
+            velocity.Y += mass * 0.01f;
 
             position.X += velocity.X;
             position.Y += velocity.Y;

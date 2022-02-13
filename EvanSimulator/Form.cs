@@ -14,7 +14,8 @@ namespace EvanSimulator
 
         public Thread gameThread;
 
-        public string assetsFolder = "C:\\Users/Austin/source/repos/EvanSimulator/EvanSimulator/assets/";
+        //public string assetsFolder = "C:\\Users/Austin/source/repos/EvanSimulator/EvanSimulator/assets/";
+        public string assetsFolder = "C:\\Users/Billy George/source/repos/EvanSimulator/EvanSimulator/assets/";
 
         public Bitmap bmp;
         public Graphics graphics;
@@ -25,6 +26,17 @@ namespace EvanSimulator
         public Random random = new Random(69);
 
 
+        //use https://keycode.info/ to get keycodes
+        public Dictionary<string, InputKey> inputKeys = new Dictionary<string, InputKey>()
+        {
+            { "jump", new InputKey(new int[] { 38, 87 }) },
+            { "crouch", new InputKey(new int[] { 16, 40, 83 }) },
+            { "shoot", new InputKey(new int[] { 32 }) },
+            { "left", new InputKey(new int[] { 37, 65 }) },
+            { "right", new InputKey(new int[] { 39, 68 }) },
+        };
+
+
         private Dictionary<string, GameObject> gameObjects = new Dictionary<string, GameObject>();
 
         private Queue<Action> toDoInGameThread = new Queue<Action>();
@@ -32,6 +44,7 @@ namespace EvanSimulator
         public Form()
         {
             //assetsFolder = Assembly.GetExecutingAssembly().Location;
+            //assetsFolder = Directory.GetCurrentDirectory();
             InitializeComponent();
         }
 
@@ -70,16 +83,33 @@ namespace EvanSimulator
         {
             while (running)
             {
-                if(GetAsyncKeyState(32) == 0x0){
-                    graphics.Clear(Color.Green);
-                }
-                else
+                foreach(KeyValuePair<string, InputKey> inputKey in inputKeys)
                 {
-                    graphics.Clear(Color.Red);
+                    bool newPressed = false;
+                    foreach (int keyCode in inputKey.Value.KeyCodes)
+                    {
+                        if (GetAsyncKeyState(keyCode) != 0x0)
+                        {
+                            newPressed = true;
+                        }
+                    }
 
+                    if (newPressed && !inputKey.Value.pressed)
+                    {
+                        KeyDownEvent(inputKey.Key);
+                    }
+
+                    if (!newPressed && inputKey.Value.pressed)
+                    {
+                        KeyUpEvent(inputKey.Key);
+                    }
+
+                    inputKey.Value.pressed = newPressed;
                 }
 
-                while(toDoInGameThread.Count > 0)
+                graphics.Clear(Color.Green);
+
+                while (toDoInGameThread.Count > 0)
                 {
                     toDoInGameThread.Dequeue()();
                 }
@@ -97,26 +127,57 @@ namespace EvanSimulator
                 //pictureBox1.Dispose();
                 if (running)
                 {
-                    pictureBox1.Invoke(new Action(() => { if (running) { pictureBox1.Invalidate(); } }));
+                    try
+                    {
+                        pictureBox1.Invoke(new Action(() =>
+                        {
+                            if (running)
+                            {
+                                try
+                                {
+                                    pictureBox1.Invalidate();
+                                }
+                                catch (ObjectDisposedException)
+                                {
+                                }
+                            }
+                        }));
+                    }
+                    catch (ObjectDisposedException)
+                    {
+                    }
                 }
-                Thread.Sleep(1);
+
+                Thread.Sleep(1000/60);
+            }
+        }
+        void KeyDownEvent(string key)
+        {
+            foreach (string go in gameObjects.Keys.ToList())
+            {
+                gameObjects[go].OnKeyDown(key);
+            }
+        }
+
+        void KeyUpEvent(string key)
+        {
+            foreach (string go in gameObjects.Keys.ToList())
+            {
+                gameObjects[go].OnKeyUp(key);
             }
         }
 
         private void Form_Closing(object sender, EventArgs e)
         {
             running = false;
-            gameThread.Join();
+            //gameThread.Join();
         }
 
         void OnKeyDown(object sender, KeyEventArgs e)
         {
             /*
             toDoInGameThread.Enqueue(() => {
-                foreach (string go in gameObjects.Keys.ToList())
-                {
-                    gameObjects[go].OnKeyDown(e.KeyCode);
-                }
+                KeyDownEvent(e.KeyCode);
             });
             e.Handled = true;
             e.SuppressKeyPress = true;
@@ -129,7 +190,7 @@ namespace EvanSimulator
             toDoInGameThread.Enqueue(() => {
                 foreach (string go in gameObjects.Keys.ToList())
                 {
-                    gameObjects[go].OnKeyUp(e.KeyCode);
+                     KeyUpEvent(e.KeyCode);
                 }
             });
             e.Handled = true;

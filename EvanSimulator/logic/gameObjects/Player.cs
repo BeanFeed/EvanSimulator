@@ -8,7 +8,8 @@ namespace EvanSimulator.logic.gameObjects
 {
     internal class Player : PhysicsObject
     {
-        float speed = 5;
+        float speed = 10;
+        float jumpPower = 40;
 
         bool left;
         bool right;
@@ -24,7 +25,7 @@ namespace EvanSimulator.logic.gameObjects
             },
             position,
             100,//mass
-            0.99f,//drag
+            0.9f,//drag
             0f//bounce
         )
         {
@@ -32,24 +33,24 @@ namespace EvanSimulator.logic.gameObjects
             size.Y = 100f;
         }
 
-        public override void OnKeyDown(Keys key)
+        public override void OnKeyDown(string key)
         {
-            if(key == Keys.A || key == Keys.Left)
+            if(key == "left")
             {
                 left = true;
             }
 
-            if (key == Keys.D || key == Keys.Right)
+            if (key == "right")
             {
                 right = true;
             }
 
-            if(key == Keys.W && grounded)
+            if(key == "jump" && grounded)
             {
-                velocity.Y = -10;
+                velocity.Y = -jumpPower;
             }
 
-            if (key == Keys.S || key == Keys.Down)
+            if (key == "crouch")
             {
                 if (!crouched)
                 {
@@ -60,7 +61,7 @@ namespace EvanSimulator.logic.gameObjects
                 }
             }
 
-            if (key == Keys.Space)
+            if (key == "shoot")
             {
                 game.Spawn(
                     ("bean-" + game.RandomString(69)),
@@ -78,19 +79,19 @@ namespace EvanSimulator.logic.gameObjects
             }
         }
 
-        public override void OnKeyUp(Keys key)
+        public override void OnKeyUp(string key)
         {
-            if (key == Keys.A || key == Keys.Left)
+            if (key == "left")
             {
                 left = false;
             }
 
-            if (key == Keys.D || key == Keys.Right)
+            if (key == "right")
             {
                 right = false;
             }
 
-            if (key == Keys.S || key == Keys.Down)
+            if (key == "crouch")
             {
                 if (crouched)
                 {
