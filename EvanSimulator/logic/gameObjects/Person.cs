@@ -19,9 +19,9 @@ namespace EvanSimulator.logic.gameObjects
         public bool left;
         public bool right;
         public bool jump;
-
+        public bool crouch;
         public bool crouched = false;
-        
+        private bool testVar = false;
         public Person(Form game, Dictionary<string, string> spriteFiles, PointF position, float mass, float drag, float bounce) : base(game, spriteFiles, position, mass, drag, bounce)
         {
         }
@@ -104,13 +104,49 @@ namespace EvanSimulator.logic.gameObjects
             {
                 Jump();
             }
+
+            if (crouch)
+            {
+                Crouch();
+            }
+            else
+            {
+                if (!isBelow())
+                {
+                    UnCrouch();
+                }
+            }
+        }
+        bool isBelow()
+        {
+            PointF checkPoint1 = new PointF(position.X, position.Y -  size.Y);
+            PointF checkPoint2 = new PointF(position.X + size.X, position.Y -  size.Y);
+            foreach (string go in game.gameObjects.Keys.ToList())
+            {
+                if (go != ID && game.gameObjects[go].hasCollision)
+                {
+                    GameObject obj = game.gameObjects[go];
+                    if (((obj.position.X < checkPoint1.X && checkPoint1.X < obj.position.X + obj.size.X) && (obj.position.Y < checkPoint1.Y && checkPoint1.Y < obj.position.Y + obj.size.Y)) ||
+                        (obj.position.X < checkPoint2.X && checkPoint2.X < obj.position.X + obj.size.X) && (obj.position.Y < checkPoint2.Y && checkPoint2.Y < obj.position.Y + obj.size.Y))
+                    {
+                        /*
+                        if ((obj.position.X < checkPoint2.X && checkPoint2.X < obj.position.X + obj.size.X) && (obj.position.Y < checkPoint2.Y && checkPoint2.Y < obj.position.Y + obj.size.Y))
+                        {
+                            return true;
+                        }
+                        */
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
 
         public override void Render()
         {
             timeSinceLastJump++;
             HandleControlValues();
-
+            testVar = isBelow();
             base.Render();
         }
 

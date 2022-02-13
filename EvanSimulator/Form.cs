@@ -70,7 +70,7 @@ namespace EvanSimulator
 
             Spawn("player", new Player(this, new PointF(100.0F,100.0F)));
             //Spawn("enemy", new Enemy(this, new PointF(300.0F, 100.0F)));
-            GameObject plat = new GameObject(this, "sprites/world/platforms/platform1.png", new PointF(400.0F, 450.0F));
+            GameObject plat = new GameObject(this, "sprites/world/platforms/platform1.png", new PointF(400.0F, 470.0F));
             plat.size = new PointF(100, 50);
             Spawn("platform-qw49e567sadkjfhj", plat);
             //gameObjects["player"].size = new PointF(50f, 50f);

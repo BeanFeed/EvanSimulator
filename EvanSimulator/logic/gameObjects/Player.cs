@@ -30,26 +30,31 @@ namespace EvanSimulator.logic.gameObjects
             size.Y = 100f;
         }
 
+        
         public override void OnKeyDown(string key)
         {
+            /*
             if (key == "crouch")
             {
                 Crouch();
             }
+            */
 
             if (key == "shoot")
             {
                 Shoot();
             }
         }
-
+        /*
         public override void OnKeyUp(string key)
         {
+            
             if (key == "crouch")
             {
                 UnCrouch();
             }
         }
+        */
 
         void Shoot()
         {
@@ -79,6 +84,7 @@ namespace EvanSimulator.logic.gameObjects
             left = game.inputKeys["left"].pressed;
             right = game.inputKeys["right"].pressed;
             jump = game.inputKeys["jump"].pressed;
+            crouch = game.inputKeys["crouch"].pressed;
         }
 
         public override void Render()
@@ -92,6 +98,29 @@ namespace EvanSimulator.logic.gameObjects
             base.Render();
         }
 
+        /*
+        bool isBelow()
+        {
+            PointF checkPoint1 = new PointF(position.X, position.Y * -2);
+            PointF checkPoint2 = new PointF(position.X + size.X, position.Y * -2);
+            foreach (string go in game.gameObjects.Keys.ToList())
+            {
+                if (go != ID && game.gameObjects[go].hasCollision)
+                {
+                    GameObject obj = game.gameObjects[go];
+                    if ((obj.position.X < checkPoint1.X && checkPoint1.X < obj.position.X + obj.size.X) && (obj.position.Y < checkPoint1.Y && checkPoint1.Y < obj.position.Y + obj.size.Y))
+                    {
+                        if ((obj.position.X < checkPoint2.X && checkPoint2.X < obj.position.X + obj.size.X) && (obj.position.Y < checkPoint2.Y && checkPoint2.Y < obj.position.Y + obj.size.Y))
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+        */
+        
         public override void GuiRender()
         {
             game.graphics.DrawImage(
