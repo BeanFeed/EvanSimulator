@@ -13,6 +13,7 @@ namespace EvanSimulator.logic.gameObjects
         public float bounce;//should be 0 and 1
         public PointF velocity = new PointF();
         public bool grounded = false;
+        public float groundedDragMultiplier = 1.3f;
 
         public PhysicsObject(Form game, string spriteFile, PointF position, float mass, float drag, float bounce) : base(game, spriteFile, position)
         {
@@ -30,13 +31,13 @@ namespace EvanSimulator.logic.gameObjects
 
         void Velocity()
         {
-            velocity.Y += mass * 0.01f;
+            velocity.Y += mass * 0.02f;
 
             position.X += velocity.X;
             position.Y += velocity.Y;
 
-            velocity.X *= drag;
-            velocity.Y *= drag;
+            velocity.X /= (grounded ? (drag * groundedDragMultiplier) : drag);
+            velocity.Y /= drag;
         }
 
         void EdgeCollision()

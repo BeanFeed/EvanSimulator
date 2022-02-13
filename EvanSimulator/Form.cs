@@ -59,7 +59,11 @@ namespace EvanSimulator
 
             graphics = Graphics.FromImage(bmp);
 
-            Spawn("wayeyBoi1", new WaveyBoi(this, new PointF(5.0F,5.0F)));
+            for (int i = 0; i < 10; i++)
+            {
+                Spawn("cloud-" + i.ToString(), new Cloud(this, new PointF(0f, random.Next(5, 300))));
+            }
+
             Spawn("player", new Player(this, new PointF(100.0F,100.0F)));
 
             //gameObjects["player"].size = new PointF(50f, 50f);
@@ -180,13 +184,6 @@ namespace EvanSimulator
         {
             running = false;
             //gameThread.Join();
-        }
-
-        public string RandomString(int length)
-        {
-            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            return new string(Enumerable.Repeat(chars, length)
-                .Select(s => s[random.Next(s.Length)]).ToArray());
         }
     }
 }

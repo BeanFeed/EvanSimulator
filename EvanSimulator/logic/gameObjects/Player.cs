@@ -9,12 +9,11 @@ namespace EvanSimulator.logic.gameObjects
     internal class Player : PhysicsObject
     {
         float speed = 10;
-        float jumpPower = 40;
+        float jumpPower = 30;
 
-        bool left;
-        bool right;
+        int timeSinceLastJump = 0;
 
-        bool crouched = false;
+        public bool crouched = false;
 
         public Player(Form game, PointF position) : base(
             game,
@@ -25,31 +24,16 @@ namespace EvanSimulator.logic.gameObjects
             },
             position,
             100,//mass
-            0.9f,//drag
+            1.001f,//drag, 1 is no drag, higher is more 
             0f//bounce
         )
         {
-            size.X = 100f;
+            size.X = 40f;
             size.Y = 100f;
         }
 
         public override void OnKeyDown(string key)
         {
-            if(key == "left")
-            {
-                left = true;
-            }
-
-            if (key == "right")
-            {
-                right = true;
-            }
-
-            if(key == "jump" && grounded)
-            {
-                velocity.Y = -(crouched ? (jumpPower / 2) : jumpPower);
-            }
-
             if (key == "crouch")
             {
                 if (!crouched)
@@ -64,12 +48,12 @@ namespace EvanSimulator.logic.gameObjects
             if (key == "shoot")
             {
                 game.Spawn(
-                    ("bean-" + game.RandomString(69)),
+                    ("bean-" + Util.RandomString(game, 69)),
                     new Bullet(
                         game,
                         new PointF(
-                            position.X + size.X / 2,
-                            position.Y + size.Y / 2
+                            position.X + (size.X * 0.5f),
+                            position.Y + (size.Y * 0.7f)
                         ),
                         (spriteToUse == "left" ? "left" : "right"),
                         velocity
@@ -81,16 +65,6 @@ namespace EvanSimulator.logic.gameObjects
 
         public override void OnKeyUp(string key)
         {
-            if (key == "left")
-            {
-                left = false;
-            }
-
-            if (key == "right")
-            {
-                right = false;
-            }
-
             if (key == "crouch")
             {
                 if (crouched)
@@ -105,23 +79,30 @@ namespace EvanSimulator.logic.gameObjects
 
         void getInput()
         {
-            if (left && right)
+            if (game.inputKeys["left"].pressed && game.inputKeys["right"].pressed)
             {
 
             }
-            else if (left)
+            else if (game.inputKeys["left"].pressed)
             {
                 velocity.X = -speed;
                 spriteToUse = "left";
             }
-            else if (right)
+            else if (game.inputKeys["right"].pressed)
             {
                 velocity.X = speed;
                 spriteToUse = "default";
             }
+
+            if (game.inputKeys["jump"].pressed && grounded && timeSinceLastJump > 5)
+            {
+                velocity.Y = -(crouched ? (jumpPower / 2) : jumpPower);
+                timeSinceLastJump = 0;
+            }
         }
         public override void Render()
         {
+            timeSinceLastJump++;
             getInput();
 
             base.Render();

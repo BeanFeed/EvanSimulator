@@ -8,20 +8,23 @@ namespace EvanSimulator.logic.gameObjects
 {
     internal class Bullet : PhysicsObject
     {
-        private float startSpeed = 15;
+        private float startSpeed = 30f;
+
+        static Dictionary<string, string> spritesCouldUse = new Dictionary<string, string>()
+        {
+            { "default", "Sprites/beans/baked/bean1.png" },
+            { "var1", "Sprites/beans/baked/bean2.png" },
+            { "var2", "Sprites/beans/baked/bean3.png" },
+            { "var3", "Sprites/beans/baked/bean4.png" }
+
+        };
+
         public Bullet(Form game, PointF position, string dir, PointF pVel) : base(
             game,
-            new Dictionary<string, string>()
-            {
-                { "default", "Sprites/beans/baked/bean1.png" },
-                { "var1", "Sprites/beans/baked/bean2.png" },
-                { "var2", "Sprites/beans/baked/bean3.png" },
-                { "var3", "Sprites/beans/baked/bean4.png" }
-
-            },
+            Util.RandomDictItem(game, spritesCouldUse).Value,
             position,
             10,//mass
-            0.99f,//drag
+            1.001f,//drag, 1 is no drag, higher is more
             0.9f//bounce
         )
         {
@@ -34,8 +37,6 @@ namespace EvanSimulator.logic.gameObjects
             {
                 velocity.X = pVel.X + startSpeed;
             }
-
-            spriteToUse = sprites.ElementAt(game.random.Next(0, sprites.Count)).Key;
 
 
             size = new PointF(10f, 10f);
