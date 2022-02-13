@@ -11,6 +11,7 @@ namespace EvanSimulator
 
         public bool running = true;
         public Stopwatch stopWatch = new Stopwatch();
+        public Stopwatch frameTimer = new Stopwatch();
 
         public Thread gameThread;
 
@@ -83,7 +84,9 @@ namespace EvanSimulator
         {
             while (running)
             {
-                foreach(KeyValuePair<string, InputKey> inputKey in inputKeys)
+                frameTimer.Restart();
+
+                foreach (KeyValuePair<string, InputKey> inputKey in inputKeys)
                 {
                     bool newPressed = false;
                     foreach (int keyCode in inputKey.Value.KeyCodes)
@@ -148,7 +151,13 @@ namespace EvanSimulator
                     }
                 }
 
-                Thread.Sleep(1000/60);
+                frameTimer.Stop();
+
+                long timeToSleep = (1000 / 60) - frameTimer.ElapsedMilliseconds;
+                if(timeToSleep > 0)
+                {
+                    Thread.Sleep((int)timeToSleep);
+                }
             }
         }
         void KeyDownEvent(string key)
@@ -171,31 +180,6 @@ namespace EvanSimulator
         {
             running = false;
             //gameThread.Join();
-        }
-
-        void OnKeyDown(object sender, KeyEventArgs e)
-        {
-            /*
-            toDoInGameThread.Enqueue(() => {
-                KeyDownEvent(e.KeyCode);
-            });
-            e.Handled = true;
-            e.SuppressKeyPress = true;
-            */
-        }
-
-        void OnKeyUp(object sender, KeyEventArgs e)
-        {
-            /*
-            toDoInGameThread.Enqueue(() => {
-                foreach (string go in gameObjects.Keys.ToList())
-                {
-                     KeyUpEvent(e.KeyCode);
-                }
-            });
-            e.Handled = true;
-            e.SuppressKeyPress = true;
-            */
         }
 
         public string RandomString(int length)

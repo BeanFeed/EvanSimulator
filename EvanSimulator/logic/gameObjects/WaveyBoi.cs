@@ -8,6 +8,8 @@ namespace EvanSimulator.logic.gameObjects
 {
     internal class WaveyBoi : GameObject
     {
+        int counter = 0;
+
         public WaveyBoi(Form game, PointF position) : base(game, "Sprites/waveyBoi.png", position)
         {
             size.X = 100f;
@@ -16,7 +18,8 @@ namespace EvanSimulator.logic.gameObjects
 
         public override void Render()
         {
-            position.X = MathF.Sin(game.stopWatch.ElapsedMilliseconds / 100) * 10f;
+            counter++;
+            position.X = MathF.Sin((float)(counter / Math.PI)) * 10f;
             
             base.Render();
         }

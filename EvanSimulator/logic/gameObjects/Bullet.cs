@@ -43,7 +43,7 @@ namespace EvanSimulator.logic.gameObjects
 
         public override void Render()
         {
-            if(MathF.Abs(velocity.X) < 1f && MathF.Abs(velocity.Y) < 1f)
+            if(MathF.Abs(velocity.X) < 0.2f && MathF.Abs(velocity.Y) < 0.2f)
             {
                 Despawn();
             }

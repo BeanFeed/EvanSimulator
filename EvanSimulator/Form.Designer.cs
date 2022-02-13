@@ -56,8 +56,6 @@
             this.Text = "Even Simulator";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form_Closing);
             this.Load += new System.EventHandler(this.Form_Load);
-            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDown);
-            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.OnKeyUp);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
 

@@ -47,7 +47,7 @@ namespace EvanSimulator.logic.gameObjects
 
             if(key == "jump" && grounded)
             {
-                velocity.Y = -jumpPower;
+                velocity.Y = -(crouched ? (jumpPower / 2) : jumpPower);
             }
 
             if (key == "crouch")
