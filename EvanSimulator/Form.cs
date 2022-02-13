@@ -18,13 +18,13 @@ namespace EvanSimulator
         //public string assetsFolder = "C:\\Users/Austin/source/repos/EvanSimulator/EvanSimulator/assets/";
         public string assetsFolder = "C:\\Users/Billy George/source/repos/EvanSimulator/EvanSimulator/assets/";
 
-        public Bitmap bmp;
+        public Bitmap bmp = new(1, 1);
         public Graphics graphics;
 
         public int width;
         public int height;
 
-        public Random random = new Random(69);
+        public Random random = new(69);
 
 
         //use https://keycode.info/ to get keycodes
@@ -40,12 +40,13 @@ namespace EvanSimulator
 
         private Dictionary<string, GameObject> gameObjects = new Dictionary<string, GameObject>();
 
-        private Queue<Action> toDoInGameThread = new Queue<Action>();
-
         public Form()
         {
             //assetsFolder = Assembly.GetExecutingAssembly().Location;
             //assetsFolder = Directory.GetCurrentDirectory();
+            gameThread = new Thread(Render);
+            graphics = Graphics.FromImage(bmp);
+
             InitializeComponent();
         }
 
@@ -69,7 +70,6 @@ namespace EvanSimulator
             //gameObjects["player"].size = new PointF(50f, 50f);
 
             stopWatch.Start();
-            gameThread = new Thread(Render);
             gameThread.Start();
         }
 
@@ -115,11 +115,6 @@ namespace EvanSimulator
                 }
 
                 graphics.Clear(Color.Green);
-
-                while (toDoInGameThread.Count > 0)
-                {
-                    toDoInGameThread.Dequeue()();
-                }
 
                 //--- render start ---
 
