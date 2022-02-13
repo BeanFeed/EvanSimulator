@@ -170,7 +170,7 @@ namespace EvanSimulator.logic.gameObjects
                     position.X = go.position.X + go.size.X;
                 }
 
-                if (MathF.Abs((position.X + size.X) - go.position.X) < (size.X / 2))
+                else if (MathF.Abs((position.X + size.X) - go.position.X) < (size.X / 2))
                 {
                     //right side touching - is left of other
 
@@ -182,7 +182,7 @@ namespace EvanSimulator.logic.gameObjects
                     position.X = go.position.X - size.X;
                 }
 
-                if (MathF.Abs(position.Y - (go.position.Y + go.size.Y)) < (size.Y / 4))
+                else if (MathF.Abs(position.Y - (go.position.Y + go.size.Y)) < (size.Y / 4))
                 {
                     //top side touching - is below other
 
@@ -194,7 +194,7 @@ namespace EvanSimulator.logic.gameObjects
                     position.Y = go.position.Y + go.size.Y;
                 }
 
-                if (MathF.Abs((position.Y + size.Y) - go.position.Y) < (size.Y / 4))
+                else if (MathF.Abs((position.Y + size.Y) - go.position.Y) < (size.Y / 4))
                 {
                     //bottom side touching - is above other
 
