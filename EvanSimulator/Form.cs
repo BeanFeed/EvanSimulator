@@ -15,8 +15,8 @@ namespace EvanSimulator
 
         public Thread gameThread;
 
-        public string assetsFolder = "C:\\Users/Austin/source/repos/EvanSimulator/EvanSimulator/assets/";
-        //public string assetsFolder = "C:\\Users/Billy George/source/repos/EvanSimulator/EvanSimulator/assets/";
+        //public string assetsFolder = "C:\\Users/Austin/source/repos/EvanSimulator/EvanSimulator/assets/";
+        public string assetsFolder = "C:\\Users/Billy George/source/repos/EvanSimulator/EvanSimulator/assets/";
 
         public Bitmap bmp = new(1, 1);
         public Graphics graphics;
@@ -27,6 +27,8 @@ namespace EvanSimulator
         public Random random = new(69);
 
         public PointF mousePos = new PointF();
+
+        public Color backgroundColor = Color.Green;
 
 
         //use https://keycode.info/ to get keycodes
@@ -68,11 +70,17 @@ namespace EvanSimulator
                 Spawn("cloud-" + i.ToString(), new Cloud(this, new PointF(0f, random.Next(5, 300))));
             }
 
-            Spawn("player", new Player(this, new PointF(100.0F,100.0F)));
+            Spawn("player", new Player(this, new PointF(100.0F, 400.0F)));
             //Spawn("enemy", new Enemy(this, new PointF(300.0F, 100.0F)));
-            GameObject plat = new GameObject(this, "sprites/world/platforms/platform1.png", new PointF(400.0F, 450.0F));
+            GameObject plat = new GameObject(this, "sprites/world/platforms/platform1.png", new PointF(400.0F, 550.0F));
             plat.size = new PointF(100, 50);
-            Spawn("platform-qw49e567sadkjfhj", plat);
+            Spawn("platform-1", plat);
+
+            GameObject plat2 = new GameObject(this, "sprites/world/platforms/platform1.png", new PointF(300.0F, 750.0F));
+            plat2.size = new PointF(100, 100);
+            Spawn("platform-2", plat2);
+
+
             //gameObjects["player"].size = new PointF(50f, 50f);
 
             stopWatch.Start();
@@ -125,7 +133,7 @@ namespace EvanSimulator
                     inputKey.Value.pressed = newPressed;
                 }
 
-                graphics.Clear(Color.Green);
+                graphics.Clear(backgroundColor);
 
                 //--- render start ---
 

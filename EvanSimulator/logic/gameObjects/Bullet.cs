@@ -36,7 +36,7 @@ namespace EvanSimulator.logic.gameObjects
             size = new PointF(10f, 10f);
         }
 
-        public override void OnCollide(GameObject against)
+        public override void OnCollide(GameObject? against)
         {
             bounceCount++;
             if(bounceCount > 1)
