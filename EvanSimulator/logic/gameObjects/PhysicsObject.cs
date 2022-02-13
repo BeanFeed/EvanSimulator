@@ -29,32 +29,47 @@ namespace EvanSimulator.logic.gameObjects
             this.bounce = bounce;
         }
 
-        void Velocity()
+        void UpdateVelocity()
         {
             velocity.Y += mass * 0.02f;
 
-            position.X += velocity.X;
-            position.Y += velocity.Y;
+            
 
             velocity.X /= (grounded ? (drag * groundedDragMultiplier) : drag);
             velocity.Y /= drag;
         }
 
+        void ApplyVelocity()
+        {
+            position.X += velocity.X;
+            position.Y += velocity.Y;
+        }
+
         void EdgeCollision()
         {
             if(
-                position.X < 0 && velocity.X < 0 ||
-                position.X + size.X > game.width && velocity.X > 0
+                position.X <= 0 && velocity.X < 0 ||
+                position.X + size.X >= game.width && velocity.X > 0
             )
             {
-                if(position.X < 0)
+                if(position.X <= 0)
                 {
                     position.X = 0;
+
+                    if (velocity.X < 0)
+                    {
+                        velocity.X *= -bounce;
+                    }
                 }
 
-                if (position.X + size.X > game.width)
+                if (position.X + size.X >= game.width)
                 {
                     position.X = game.width - size.X;
+
+                    if (velocity.X > 0)
+                    {
+                        velocity.X *= -bounce;
+                    }
                 }
 
                 velocity.X *= -bounce;
@@ -62,30 +77,39 @@ namespace EvanSimulator.logic.gameObjects
             }
 
             if (
-                position.Y < 0 && velocity.Y < 0 ||
-                position.Y + size.Y > game.height && velocity.Y > 0
+                position.Y <= 0 && velocity.Y < 0 ||
+                position.Y + size.Y >= game.height && velocity.Y > 0
             )
             {
-                if (position.Y < 0)
+                if (position.Y <= 0)
                 {
                     position.Y = 0;
+
+                    if (velocity.Y < 0)
+                    {
+                        velocity.Y *= -bounce;
+                    }
                 }
 
                 if (position.Y + size.Y >= game.height) {
                     grounded = true;
                 }
 
-                if (position.Y + size.Y > game.height)
+                if (position.Y + size.Y >= game.height)
                 {
                     position.Y = game.height - size.Y;
+
+                    if(velocity.Y > 0)
+                    {
+                        velocity.Y *= -bounce;
+                    }
                 }
 
-                velocity.Y *= -bounce;
                 OnCollide(null);
             }
         }
 
-        public virtual void OnCollide(GameObject against)
+        public virtual void OnCollide(GameObject? against)
         {
             
         }
@@ -101,7 +125,7 @@ namespace EvanSimulator.logic.gameObjects
             }
         }
 
-        void ObjectCollision(GameObject go)
+        public bool OverlapsObject(GameObject go)
         {
             float thisBottom = position.Y + size.Y;
             float thisRight = position.X + size.X;
@@ -112,78 +136,79 @@ namespace EvanSimulator.logic.gameObjects
             bool leftOverlapX = position.X >= go.position.X && position.X <= otherRight;//left side of this is in other
             bool rightOverlapX = thisRight >= go.position.X && thisRight <= otherRight;//right side of this is in other
 
-            float xOverlapAmt = Math.Max(
-                Math.Max(
-                    position.X - go.position.X,
-                    otherRight - position.X
-                ),
-                Math.Max(
-                    thisRight - go.position.X,
-                    otherRight - thisRight
-                )
-            );
+            bool otherLeftOverlapX = go.position.X >= position.X && go.position.X <= thisRight;//left side of other is in this
+            bool otherRightOverlapX = otherRight >= position.X && otherRight <= thisRight;//right side of other is in this
 
-            bool overlapX = leftOverlapX || rightOverlapX;
+            bool overlapX = leftOverlapX || rightOverlapX || otherLeftOverlapX || otherRightOverlapX;
 
             bool topOverlapY = position.Y >= go.position.Y && position.Y <= otherBottom;//top side of this is in other
             bool bottomOverlapY = thisBottom >= go.position.Y && thisBottom <= otherBottom;//bottom side of this is in other
 
-            float yOverlapAmt = Math.Max(
-                Math.Max(
-                    position.Y - go.position.Y,
-                    otherBottom - position.Y
-                ),
-                Math.Max(
-                    thisBottom - go.position.Y,
-                    otherBottom - thisBottom
-                )
-            );
+            bool otherTopOverlapY = go.position.Y >= position.Y && go.position.Y <= thisBottom;//left side of other is in this
+            bool otherBottomOverlapY = otherBottom >= position.Y && otherBottom <= thisBottom;//right side of other is in this
 
-            bool overlapY = topOverlapY || bottomOverlapY;
+            bool overlapY = topOverlapY || bottomOverlapY || otherTopOverlapY || otherBottomOverlapY;
 
-            if (overlapX && overlapY)
+            return overlapX && overlapY;
+        }
+
+        void ObjectCollision(GameObject go)
+        {
+            if (OverlapsObject(go))
             {
                 OnCollide(go);
 
-                if (overlapX && xOverlapAmt > yOverlapAmt)
+                if (MathF.Abs(position.X - (go.position.X + go.size.X)) < (size.X / 2))
                 {
-                    if ((leftOverlapX && velocity.X < 0) || (rightOverlapX && velocity.X > 0))
+                    //left side touching - is right of other
+
+                    if (velocity.X < 0)
+                    {
+                        velocity.X *= -bounce;
+                    }
+                    
+                    position.X = go.position.X + go.size.X;
+                }
+
+                if (MathF.Abs((position.X + size.X) - go.position.X) < (size.X / 2))
+                {
+                    //right side touching - is left of other
+
+                    if (velocity.X > 0)
                     {
                         velocity.X *= -bounce;
                     }
 
-                    if (leftOverlapX)
-                    {
-                        position.X = otherRight + 1;
-                    }
-
-                    if (rightOverlapX)
-                    {
-                        position.X = (go.position.X - size.X) - 1;
-                    }
+                    position.X = go.position.X - size.X;
                 }
 
-
-                if (overlapY && xOverlapAmt < yOverlapAmt)
+                if (MathF.Abs(position.Y - (go.position.Y + go.size.Y)) < (size.Y / 4))
                 {
-                    if ((topOverlapY && velocity.Y < 0) || (bottomOverlapY && velocity.Y > 0))
+                    //top side touching - is below other
+
+                    if (velocity.Y < 0)
                     {
                         velocity.Y *= -bounce;
                     }
 
-                    if (topOverlapY)
-                    {
-                        position.Y = otherBottom + 1;
-                    }
-
-                    if (bottomOverlapY)
-                    {
-                        grounded = true;
-                        position.Y = (go.position.Y - size.Y) - 1;
-                    }
+                    position.Y = go.position.Y + go.size.Y;
                 }
 
-                if(go is PhysicsObject)
+                if (MathF.Abs((position.Y + size.Y) - go.position.Y) < (size.Y / 4))
+                {
+                    //bottom side touching - is above other
+
+                    if (velocity.Y > 0)
+                    {
+                        velocity.Y *= -bounce;
+                    }
+
+                    position.Y = go.position.Y - size.Y;
+
+                    grounded = true;
+                }
+
+                if (go is PhysicsObject)
                 {
                     velocity = Util.AddPositions(velocity, ((PhysicsObject)go).velocity);
                 }
@@ -192,12 +217,14 @@ namespace EvanSimulator.logic.gameObjects
 
         void Physics()
         {
-            Velocity();
+            UpdateVelocity();
 
             grounded = false;
             //one of the following collision can set grounded to true
             EdgeCollision();
             ObjectsCollision();
+
+            ApplyVelocity();
         }
 
         public override void Render()
