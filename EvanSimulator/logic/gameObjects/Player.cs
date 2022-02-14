@@ -10,7 +10,7 @@ namespace EvanSimulator.logic.gameObjects
     {
 
         int shootCooldown = 0;
-
+        string randomString;
         public Player(Form game, PointF position) : base(
             game,
             new Dictionary<string, string>()
@@ -69,15 +69,16 @@ namespace EvanSimulator.logic.gameObjects
             PointF startingVel = Util.SubtractPositions(game.mousePos, shootFrom);
             startingVel = Util.NormalizeVector(startingVel);
             startingVel = Util.ScaleVector(startingVel, 50f);
-
+            randomString = Util.RandomString(game,69);
             game.Spawn(
-                ("bean-" + Util.RandomString(game, 69)),
+                ("bean-" + randomString),
                 new Bullet(
                     game,
                     shootFrom,
                     Util.AddPositions(velocity, startingVel)
                 )
             );
+            game.gameObjects["bean-" + randomString].hasCollision = false;
         }
         void getInput()
         {

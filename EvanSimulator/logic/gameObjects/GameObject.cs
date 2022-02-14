@@ -13,7 +13,7 @@ namespace EvanSimulator.logic
         internal Form game;
 
         public bool hasCollision = true;
-
+        public int collisionGroup =  0;
         public Dictionary<string, Image> sprites = new Dictionary<string, Image>();
         public string spriteToUse = "default";
 
