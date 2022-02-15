@@ -71,20 +71,24 @@ namespace EvanSimulator
             }
 
             Spawn("player", new Player(this, new PointF(100.0F,100.0F)));
-            //Spawn("enemy", new Enemy(this, new PointF(300.0F, 100.0F)));
+            //GameObject enemy1 = Spawn("enemy", new Enemy(this, new PointF(300.0F, 100.0F)));
+            //enemy1.hasCollision = false;
             GameObject plat = new GameObject(this, "sprites/world/platforms/platform1.png", new PointF(400.0F, 325.0F));
             plat.size = new PointF(100, 50);
-            Spawn("platform-qw49e567sadkjfhj", plat);
+            GameObject platform1 = Spawn("platform-qw49e567sadkjfhj", plat);
+            
             //gameObjects["player"].size = new PointF(50f, 50f);
 
             stopWatch.Start();
             gameThread.Start();
         }
 
-        public void Spawn(string id, GameObject toSpawn)
+        public GameObject Spawn(string id, GameObject toSpawn)
         {
             toSpawn.ID = id;
             gameObjects.Add(id, toSpawn);
+            return gameObjects[id];
+
         }
 
         public void Despawn(string id)

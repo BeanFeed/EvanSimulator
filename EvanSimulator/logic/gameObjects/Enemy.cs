@@ -29,7 +29,7 @@ namespace EvanSimulator.logic.gameObjects
         }
 
         int shootCooldown = 1;
-
+        GameObject bean;
         public override void Shoot()
         {
             PointF shootFrom = GetShootFrom();
@@ -38,7 +38,7 @@ namespace EvanSimulator.logic.gameObjects
             PointF startingVel = Util.SubtractPositions(player, shootFrom);
             startingVel = Util.ScaleVector(startingVel, 0.1f);
 
-            game.Spawn(
+            bean = game.Spawn(
                     ("bean-" + Util.RandomString(game, 69)),
                     new Bullet(
                         game,
@@ -46,6 +46,7 @@ namespace EvanSimulator.logic.gameObjects
                         startingVel
                     )
                 );
+            bean.hasCollision = false;
         }
 
         bool isClose()
@@ -70,7 +71,7 @@ namespace EvanSimulator.logic.gameObjects
             right = false;
             jump = false;
 
-            if (Util.DstForm(self,target) > 100)
+            if (Util.DstForm(self,target) > 200)
             {
                 if (target.X < self.X)
                 {
