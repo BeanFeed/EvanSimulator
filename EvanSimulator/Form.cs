@@ -67,15 +67,16 @@ namespace EvanSimulator
 
             for (int i = 0; i < 10; i++)
             {
-                Spawn("cloud-" + i.ToString(), new Cloud(this, new PointF(0f, random.Next(5, 300))));
+                Spawn("cloud-" + i.ToString(), new Cloud(this, new PointF(0f, random.Next(5, 300))),1);
             }
 
-            Spawn("player", new Player(this, new PointF(100.0F,100.0F)));
+            GameObject player = Spawn("player", new Player(this, new PointF(100.0F,100.0F)),1);
             //GameObject enemy1 = Spawn("enemy", new Enemy(this, new PointF(300.0F, 100.0F)));
             //enemy1.hasCollision = false;
             GameObject plat = new GameObject(this, "sprites/world/platforms/platform1.png", new PointF(400.0F, 325.0F));
             plat.size = new PointF(100, 50);
-            GameObject platform1 = Spawn("platform-qw49e567sadkjfhj", plat);
+            GameObject platform1 = Spawn("platform-qw49e567sadkjfhj", plat,1);
+            platform1.collisionGroup = 1;
             
             //gameObjects["player"].size = new PointF(50f, 50f);
 
@@ -83,10 +84,11 @@ namespace EvanSimulator
             gameThread.Start();
         }
 
-        public GameObject Spawn(string id, GameObject toSpawn)
+        public GameObject Spawn(string id, GameObject toSpawn, int collisionGroup)
         {
             toSpawn.ID = id;
             gameObjects.Add(id, toSpawn);
+            gameObjects[id].collisionGroup = collisionGroup;
             return gameObjects[id];
 
         }
@@ -106,7 +108,7 @@ namespace EvanSimulator
                 mousePos.Y = Cursor.Position.Y - pictureBox1.Location.Y - Location.Y;
 
                 mousePos = Util.ScaleVector(mousePos, 0.935f);
-
+                
                 foreach (KeyValuePair<string, InputKey> inputKey in inputKeys)
                 {
                     bool newPressed = false;

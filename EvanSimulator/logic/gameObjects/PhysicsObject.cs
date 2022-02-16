@@ -154,7 +154,7 @@ namespace EvanSimulator.logic.gameObjects
 
         void ObjectCollision(GameObject go)
         {
-            if (OverlapsObject(go))
+            if (OverlapsObject(go) && collisionGroup == go.collisionGroup)
             {
                 OnCollide(go);
 

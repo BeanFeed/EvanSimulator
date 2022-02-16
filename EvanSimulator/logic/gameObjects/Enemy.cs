@@ -44,7 +44,8 @@ namespace EvanSimulator.logic.gameObjects
                         game,
                         shootFrom,
                         startingVel
-                    )
+                    ),
+                    2
                 );
             bean.hasCollision = false;
         }

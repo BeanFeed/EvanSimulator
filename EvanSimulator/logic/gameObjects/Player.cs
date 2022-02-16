@@ -29,8 +29,8 @@ namespace EvanSimulator.logic.gameObjects
             size.X = 40f;
             size.Y = 100f;
         }
-
         
+
         public override void OnKeyDown(string key)
         {
             /*
@@ -39,11 +39,11 @@ namespace EvanSimulator.logic.gameObjects
                 Crouch();
             }
             */
-
             if (key == "shoot")
             {
                 Shoot();
             }
+
         }
         /*
         public override void OnKeyUp(string key)
@@ -76,9 +76,10 @@ namespace EvanSimulator.logic.gameObjects
                     game,
                     shootFrom,
                     Util.AddPositions(velocity, startingVel)
-                )
+                ),
+                2
             );
-            game.gameObjects["bean-" + randomString].hasCollision = false;
+            game.gameObjects["bean-" + randomString].collisionGroup = 2;
         }
         void getInput()
         {
